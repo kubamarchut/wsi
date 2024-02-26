@@ -3,6 +3,7 @@
 from data_loader import load_data
 from tests import get_all_possabilities
 
+
 def main():
     data = load_data("data.csv")
     print(data)
