@@ -7,6 +7,9 @@ class QFunc:
         self.alpha = alpha
         self.n = n
 
+    def genInput(n, minX, maxX):
+        return np.random.uniform(minX, maxX, n)
+
     def setAlpha(self, new_alpha):
         self.alpha = new_alpha
 
