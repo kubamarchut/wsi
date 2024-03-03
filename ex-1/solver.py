@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 
 
-class SolverOuput:
+class SolverOutput:
     def __init__(self, subsequent_values, beta, starting_point):
         """
         Initialize SolverOutput object.
@@ -89,4 +89,4 @@ def solver(objective_func, x0, beta=0.008, max_steps=200, eps=1e-6, threshold=10
 
         steps_counter += 1
 
-    return SolverOuput(func_values, beta, x0)
+    return SolverOutput(func_values, beta, x0)
