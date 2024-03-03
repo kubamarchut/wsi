@@ -6,12 +6,32 @@ from solver import solver
 
 
 def generate_input(minX, maxX, n):
+    """
+    Generate input matrix of values within a specified range.
+
+    Args:
+        min_x (float): The minimum value for input x.
+        max_x (float): The maximum value for input x.
+        n (int): The number of dimensions in the input matrix to generate.
+
+    Returns:
+        ndarray: An array of n input values.
+    """
     return np.random.uniform(minX, maxX, n)
 
 
-def testBetaImpact(QFunc, alphas, n):
+def test_beta_impact(QFunc, alphas, n):
+    """
+    Perform beta impact analysis for a given QFunc and alpha values.
+
+    Args:
+        QFunc (class): The QFunc class representing the objective function.
+        alphas (list): A list of alpha values to test.
+        n (int): The number of dimensions in the function (default is 10).
+
+    """
     print("\tstarting beta impact analysis function")
-    fig, axes = plt.subplots(1, len(alphas), figsize=(15, 5))
+    _, axes = plt.subplots(1, len(alphas), figsize=(15, 5))
     plt.style.use("ggplot")
     startingX = generate_input(-100, 100, n)
     print(f"\tstarting point={startingX}")
