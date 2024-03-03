@@ -5,11 +5,16 @@ import sys
 from solver import solver
 
 
+def generateInput(minX, maxX, n):
+    return np.random.uniform(minX, maxX, n)
+
+
 def testBetaImpact(QFunc, alphas, n):
     print("\tstarting beta impact analysis function")
     fig, axes = plt.subplots(1, len(alphas), figsize=(15, 5))
     plt.style.use("ggplot")
-    startingX = QFunc.genInput(n, -100, 100)
+    startingX = generateInput(-100, 100, n)
+    print(f"\tstarting point={startingX}")
 
     for i, alpha in enumerate(alphas):
         print(f"\t• testing for alpha = {alpha}")

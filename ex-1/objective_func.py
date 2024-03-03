@@ -2,13 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def generateInput(minX, maxX, n):
+    return np.random.uniform(minX, maxX, n)
+
+
 class QFunc:
     def __init__(self, alpha, n=10):
         self.alpha = alpha
         self.n = n
 
-    def genInput(n, minX, maxX):
-        return np.random.uniform(minX, maxX, n)
+    def genInput(self, minX, maxX):
+        return generateInput(minX, maxX, self.n)
 
     def setAlpha(self, new_alpha):
         self.alpha = new_alpha

@@ -3,13 +3,15 @@ from solver import *
 from objective_func import *
 from beta_tests import testBetaImpact
 
+np.set_printoptions(precision=2)
+
 
 def simpleTest(QFunc, alphas, n):
     print("\tstarting simple test to check if solver works")
     for alpha in alphas:
         print(f"\t• testing for alpha = {alpha}")
         objectiveFunc = QFunc(alpha=alpha, n=n)
-        startingPoint = QFunc.genInput(n, -100, 100)
+        startingPoint = objectiveFunc.genInput(-100, 100)
         # solvedData = solver(objectiveFunc.getFunc, np.ones(n))
         solvedData = solver(objectiveFunc.getFunc, startingPoint)
 
