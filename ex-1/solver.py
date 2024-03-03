@@ -3,58 +3,90 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-threshold = 10e12
 
+class SolverOuput:
+    def __init__(self, subsequent_values, beta, starting_point):
+        """
+        Initialize SolverOutput object.
 
-class SoleverOuput:
-    def __init__(self, subsequentValues, beta, startingPoint):
-        self.subsequentValues = subsequentValues
+        Args:
+            subsequent_values (list): List of subsequent values obtained during solver execution.
+            beta (float): The beta parameter used in the solver.
+            starting_point (ndarray): The initial starting point for the solver.
+        """
+        self.subsequent_values = subsequent_values
         self.beta = beta
-        self.startingPoint = startingPoint
+        self.starting_point = starting_point
 
-    def printSteps(self):
-        for index, value in enumerate(self.subsequentValues):
-            indexLength = int(math.log10(len(self.subsequentValues))) + 1
-            print(f"step {(index+1):{indexLength}} q(xt)={value}")
+    def print_steps(self):
+        """
+        Print each step's details during solver execution.
+        """
+        for index, value in enumerate(self.subsequent_values):
+            index_length = int(math.log10(len(self.subsequent_values))) + 1
+            print(f"step {(index+1):{index_length}} q(xt)={value}")
 
-    def drawGraph(self):
-        plt.plot(self.subsequentValues)
+    def draw_graph(self):
+        """
+        Draw a graph to visualize the subsequent values obtained during solver execution.
+        """
+        plt.plot(self.subsequent_values)
         plt.xlabel("x")
         plt.ylabel("q(x)")
         plt.title(f"Visualization of q(x) for alpha={1}")
         plt.show()
 
-    def getFinalValue(self):
-        return self.subsequentValues[-1]
+    def get_final_value(self):
+        """
+        Get the final value obtained after solver execution.
 
-    def getRunSteps(self):
-        return len(self.subsequentValues)
+        Returns:
+            float: The final value.
+        """
+        return self.subsequent_values[-1]
+
+    def get_run_steps(self):
+        """
+        Get the number of steps/iterations taken during solver execution.
+
+        Returns:
+            int: The number of steps/iterations.
+        """
+        return len(self.subsequent_values)
 
 
-def solver(object, x0, method="gradient-descent", beta=0.008, max_steps=200, eps=1e-6):
-    if method == "gradient-descent":
-        current_value = np.copy(x0)
-        steps_counter = 0
-        func_values = []
+def solver(objective_func, x0, beta=0.008, max_steps=200, eps=1e-6, threshold=10e12):
+    """
+    Solve the optimization problem using gradient descent.
 
-        while steps_counter < max_steps:
-            grad_f = grad(object)
-            diff = beta * grad_f(current_value)
-            current_value -= diff
-            func_values.append(object(current_value))
+    Args:
+        objective_func (callable): The objective function to minimize.
+        x0 (ndarray): The initial starting point for optimization.
+        beta (float, optional): The learning rate (default is 0.008).
+        max_steps (int, optional): The maximum number of optimization steps (default is 200).
+        eps (float, optional): The convergence threshold (default is 1e-6).
+        threshold (float, optional): The threshold value for objective function (default is 10e12).
 
-            if object(current_value) > threshold:
+    Returns:
+        SolverOutput: An object containing information about solver execution.
+    """
+    current_value = np.copy(x0)
+    steps_counter = 0
+    func_values = []
+
+    while steps_counter < max_steps:
+        grad_f = grad(objective_func)
+        diff = beta * grad_f(current_value)
+        current_value -= diff
+        func_values.append(objective_func(current_value))
+
+        if len(func_values) > 2:
+            if (
+                abs(func_values[-1] - func_values[-2]) < eps
+                or abs(func_values[-1] - func_values[-2]) > threshold
+            ):
                 break
-            if len(func_values) > 2:
-                if (
-                    abs(func_values[-1] - func_values[-2]) < eps
-                    or abs(func_values[-1] - func_values[-2]) > threshold
-                ):
-                    break
 
-            steps_counter += 1
+        steps_counter += 1
 
-        return SoleverOuput(func_values, beta, x0)
-
-    else:
-        pass  # not yet implemented
+    return SolverOuput(func_values, beta, x0)

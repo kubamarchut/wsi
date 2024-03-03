@@ -5,7 +5,7 @@ import sys
 from solver import solver
 
 
-def generateInput(minX, maxX, n):
+def generate_input(minX, maxX, n):
     return np.random.uniform(minX, maxX, n)
 
 
@@ -13,7 +13,7 @@ def testBetaImpact(QFunc, alphas, n):
     print("\tstarting beta impact analysis function")
     fig, axes = plt.subplots(1, len(alphas), figsize=(15, 5))
     plt.style.use("ggplot")
-    startingX = generateInput(-100, 100, n)
+    startingX = generate_input(-100, 100, n)
     print(f"\tstarting point={startingX}")
 
     for i, alpha in enumerate(alphas):
@@ -37,9 +37,9 @@ def testBetaImpact(QFunc, alphas, n):
                 if beta < 0.01
                 else str(round(beta, roundFactor))
             )
-            solvedDatab1 = solver(objectiveFunc.getFunc, startingX, beta=beta)
+            solvedDatab1 = solver(objectiveFunc.get_func, startingX, beta=beta)
             axes[i].plot(
-                solvedDatab1.subsequentValues,
+                solvedDatab1.subsequent_values,
                 label=r"$\beta$=" + displayedBeta,
             )
         sys.stdout.write("\r\033[K")
