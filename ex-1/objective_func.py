@@ -11,29 +11,49 @@ class QFunc:
     A class to generate and visualize the function q(x).
     """
 
-    def __init__(self, alpha, n=10):
+    def __init__(self, alpha, min_x=-100, max_x=100, n=10):
         """
         Initialize QFunc object.
 
         Args:
             alpha (float): The alpha parameter for the function.
+            min_x (float, optional): The minimum value for input x (default is -100).
+            max_x (float, optional): The maximum value for input x (default is 100).
             n (int): The number of dimensions in the function (default is 10).
         """
         self.alpha = alpha
         self.n = n
+        self.min_x = min_x
+        self.max_x = max_x
 
-    def gen_input(self, min_x, max_x):
+    def gen_input(self):
         """
         Generate random input matrix for the function.
-
-        Args:
-            min_x (float): The minimum value for input x.
-            max_x (float): The maximum value for input x.
 
         Returns:
             ndarray: An array of 1xn input matrix with values between min_x and max_x.
         """
-        return generate_input(min_x, max_x, self.n)
+        return generate_input(self.min_x, self.max_x, self.n)
+
+    def set_domain(self, min_x, max_x):
+        """
+        Set new domain values for the function.
+
+        Args:
+            min_x (float): The new minimum value for input x.
+            max_x (float): The new maximum value for input x.
+        """
+        self.min_x = min_x
+        self.max_x = max_x
+
+    def get_domain(self):
+        """
+        Get the current domain values of the function.
+
+        Returns:
+            tuple: A tuple containing the minimum and maximum values of input x.
+        """
+        return self.min_x, self.max_x
 
     def set_alpha(self, new_alpha):
         """
@@ -99,7 +119,7 @@ class QFunc:
         Returns:
             ndarray: An array of corresponding function values.
         """
-        return [self.get_func(x) for x in X]
+        return np.array([self.get_func(x) for x in X])
 
 
 if __name__ == "__main__":
