@@ -83,7 +83,7 @@ def solver(objective_func, x0, beta=0.008, max_steps=200, eps=1e-6, threshold=10
         if len(func_values) > 2:
             if (
                 abs(func_values[-1] - func_values[-2]) < eps
-                or abs(func_values[-1] - func_values[-2]) > threshold
+                or func_values[-1] - func_values[-2] > threshold
             ):
                 break
 
