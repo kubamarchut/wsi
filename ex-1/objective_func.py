@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def generate_input(minX, maxX, n):
@@ -88,26 +89,45 @@ class QFunc:
 
         return np.sum(powers * np.power(x, 2))
 
-    def draw(self, points=10000):
+    def draw(self, points=1000):
         """
         Visualize the function q(x) for a range of input values.
 
         Args:
-            points (int): The number of points to plot (default is 10000).
+            points (int): The number of points to plot (default is 1000).
         """
-        x_range = np.linspace(-100, 100, points)
-        X = np.zeros((len(x_range), self.n))
-        for i, x_val in enumerate(x_range):
-            X[i] = x_val * np.ones(self.n)
+        if self.n == 2:
+            X = np.linspace(self.min_x, self.max_x, points)
+            Y = np.linspace(self.min_x, self.max_x, points)
+            X, Y = np.meshgrid(X, Y)
 
-        y = self.calculate(X)
+            combined = np.vstack((X.ravel(), Y.ravel())).T
 
-        plt.scatter(X[:, 0], y)
-        plt.colorbar(label="q(x)")
-        plt.xlabel("x")
-        plt.ylabel("q(x)")
-        plt.title(f"Visualization of q(x) for alpha={self.alpha}")
-        plt.show()
+            y = self.calculate(combined)
+            
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+
+            ax.plot_surface(X, Y, y.reshape(X.shape), cmap='viridis')
+            ax.set_xlabel('x')
+            ax.set_ylabel('y')
+            ax.set_zlabel('q(x)')
+            ax.set_title(f"Visualization of q(x) for {r"$\alpha$"}={self.alpha}")
+            plt.show()
+        else:
+            x_range = np.linspace(-100, 100, points)
+            X = np.zeros((len(x_range), self.n))
+            for i, x_val in enumerate(x_range):
+                X[i] = x_val * np.ones(self.n)
+            
+            y = self.calculate(X)
+
+            plt.scatter(X[:, 0], y)
+            plt.colorbar(label="q(x)")
+            plt.xlabel("x")
+            plt.ylabel("q(x)")
+            plt.title(f"Visualization of q(x) for {r"$\alpha$"}={self.alpha}")
+            plt.show()
 
     def calculate(self, X):
         """
@@ -126,5 +146,5 @@ if __name__ == "__main__":
     alphas = [1, 10, 100]
 
     for alpha in alphas:
-        objectiveFunc = QFunc(alpha)
+        objectiveFunc = QFunc(alpha, n=2)
         objectiveFunc.draw()
