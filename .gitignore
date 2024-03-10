@@ -1,5 +1,6 @@
 #private
 .vscode/
+common/.md
 ex-*/doc
 experiments/threads/*
 
