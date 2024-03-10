@@ -1,4 +1,5 @@
 import numpy as np
+
 from solver import solver
 from objective_func import QFunc
 from tests.beta_tests import test_beta_impact, beta_test_impact_multiple
@@ -6,6 +7,18 @@ from tests.beta_test_stat import beta_test_impact_stat
 from tests.simple_test import simple_test
 
 np.set_printoptions(precision=2)
+
+
+def run_additional_tests():
+    """
+    Function to run additional tests.
+    """
+    alphas = [1, 10, 100]
+    n = 10
+
+    # Uncomment the lines you want to run
+    # beta_test_impact_multiple(QFunc, alphas, n)
+    # beta_test_impact_stat(QFunc, alphas, n)
 
 
 def main():
@@ -27,9 +40,4 @@ def main():
 
 
 if __name__ == "__main__":
-    alphas = [1, 10, 100]
-    n = 10
-
-    beta_test_impact_multiple(QFunc, alphas, n)
-    # beta_test_impact_stat(QFunc, alphas, n)
-    # main()
+    main()

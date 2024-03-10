@@ -6,7 +6,7 @@ import multiprocessing as mp
 from solver import solver
 
 
-def generate_input(minX, maxX, n):
+def generate_input(min_x, max_x, n):
     """
     Generate input matrix of values within a specified range.
 
@@ -18,7 +18,7 @@ def generate_input(minX, maxX, n):
     Returns:
         ndarray: An array of n input values.
     """
-    return np.random.uniform(minX, maxX, n)
+    return np.random.uniform(min_x, max_x, n)
 
 
 def test_beta_impact(QFunc, alphas, n):
@@ -34,7 +34,7 @@ def test_beta_impact(QFunc, alphas, n):
     print("\tstarting beta impact analysis function")
     _, axes = plt.subplots(1, len(alphas), figsize=(15, 5))
     plt.style.use("ggplot")
-    startingX = generate_input(-100, 100, n)
+    #startingX = generate_input(-100, 100, n)
     startingX = np.ones(n)
     print(f"\tstarting point={startingX}")
 
@@ -93,6 +93,7 @@ def worker_func(alpha, beta_range, n_test, objective_function, solver_func):
 
         result = np.mean([obj.get_final_value() for obj in SolvedDataForBeta])
         results.append((beta, result))
+        
     return results
 
 def beta_test_impact_multiple(QFunc, alphas, n, n_test=5e2):

@@ -2,10 +2,11 @@ from autograd import grad
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import time
 
 
 class SolverOutput:
-    def __init__(self, subsequent_values, beta, starting_point):
+    def __init__(self, subsequent_values, beta, starting_point, time):
         """
         Initialize SolverOutput object.
 
@@ -17,6 +18,7 @@ class SolverOutput:
         self.subsequent_values = subsequent_values
         self.beta = beta
         self.starting_point = starting_point
+        self.time = time
 
     def print_steps(self):
         """
@@ -70,10 +72,14 @@ def solver(objective_func, x0, beta=0.008, max_steps=200, eps=1e-6, threshold=10
     Returns:
         SolverOutput: An object containing information about solver execution.
     """
+
+    if not callable(objective_func):
+        raise ValueError("Objective function must be callable.")
+
     current_value = np.copy(x0)
     steps_counter = 0
     func_values = []
-
+    start_time = time.time()
     while steps_counter < max_steps:
         grad_f = grad(objective_func)
         diff = beta * grad_f(current_value)
@@ -89,4 +95,7 @@ def solver(objective_func, x0, beta=0.008, max_steps=200, eps=1e-6, threshold=10
 
         steps_counter += 1
 
-    return SolverOutput(func_values, beta, x0)
+    stop_time = time.time()
+    delta = (stop_time - start_time) * 1000
+
+    return SolverOutput(func_values, beta, x0, delta)

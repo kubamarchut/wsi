@@ -1,4 +1,5 @@
 from solver import solver
+import numpy as np
 
 
 def simple_test(QFunc, alphas, n, min_x=-100, max_x=100):
@@ -8,7 +9,7 @@ def simple_test(QFunc, alphas, n, min_x=-100, max_x=100):
     Args:
         QFunc (class): The QFunc class representing the objective function.
         alphas (list): A list of alpha values to test.
-        n (int): The number of dimensions in the function (default is 10).
+        n (int): The number of dimensions in the function.
         min_x (float, optional): The minimum value for input x (default is -100).
         max_x (float, optional): The maximum value for input x (default is 100).
     """
@@ -17,7 +18,8 @@ def simple_test(QFunc, alphas, n, min_x=-100, max_x=100):
         print(f"\t• testing for alpha = {alpha}")
         objective_func = QFunc(alpha=alpha, min_x=min_x, max_x=max_x, n=n)
         starting_point = objective_func.gen_input()
-        # solved_data = solver(objective_func.get_func, np.ones(n))
+        starting_point = np.ones(n)
+
         solved_data = solver(objective_func.get_func, starting_point)
 
         print(f"\t\tbeta={solved_data.beta}")

@@ -104,29 +104,29 @@ class QFunc:
             combined = np.vstack((X.ravel(), Y.ravel())).T
 
             y = self.calculate(combined)
-            
-            fig = plt.figure()
-            ax = fig.add_subplot(111, projection='3d')
 
-            ax.plot_surface(X, Y, y.reshape(X.shape), cmap='viridis')
-            ax.set_xlabel('x')
-            ax.set_ylabel('y')
-            ax.set_zlabel('q(x)')
-            ax.set_title(f"Visualization of q(x) for {r"$\alpha$"}={self.alpha}")
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection="3d")
+
+            ax.plot_surface(X, Y, y.reshape(X.shape), cmap="viridis")
+            ax.set_xlabel("x")
+            ax.set_ylabel("y")
+            ax.set_zlabel("q(x)")
+            plt.title(f"Visualization of q(X) for {r"$\alpha$"}={self.alpha}")
             plt.show()
         else:
             x_range = np.linspace(-100, 100, points)
             X = np.zeros((len(x_range), self.n))
             for i, x_val in enumerate(x_range):
                 X[i] = x_val * np.ones(self.n)
-            
+
             y = self.calculate(X)
 
             plt.scatter(X[:, 0], y)
             plt.colorbar(label="q(x)")
             plt.xlabel("x")
             plt.ylabel("q(x)")
-            plt.title(f"Visualization of q(x) for {r"$\alpha$"}={self.alpha}")
+            plt.title(f"Visualization of q(X) for {r"$\alpha$"}={self.alpha}")
             plt.show()
 
     def calculate(self, X):
