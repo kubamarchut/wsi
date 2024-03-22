@@ -1,7 +1,10 @@
 #private
+*.pdf
+*.zip
 .vscode/
 common/.md
 ex-*/doc
+kod/
 experiments/threads/*
 
 # Byte-compiled / optimized / DLL files
