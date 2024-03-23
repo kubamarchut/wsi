@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import time
+import copy
+
 from evolution import *
 
 
@@ -96,23 +98,28 @@ def solver(
     population.initialize()
     # fitness
     population.fitness(objective_func.get_func)
-    print(population)
+
+    initial_population = np.copy(population.individuals)
+    best = sorted(initial_population, key=lambda x: x.fitness_score)[0]
+
     steps_counter = 0
-    func_values = []
     start_time = time.time()
     while steps_counter < max_steps:
-        func_values.append(objective_func(current_value))
+        population.selection()
+        population.perform_crossover(0.75)
+        population.mutate(0.1)
+        population.fitness(objective_func.get_func)
+        current_best = sorted(population.individuals, key=lambda x: x.fitness_score)[0]
+        # print(population)
 
-        if len(func_values) > 2:
-            if (
-                abs(func_values[-1] - func_values[-2]) < eps
-                or func_values[-1] - func_values[-2] > threshold
-            ):
-                break
+        if current_best.fitness_score < best.fitness_score:
+            best = copy.deepcopy(current_best)
 
+        # print(best, "|", current_best)
         steps_counter += 1
 
+    print("best solution for", objective_func.name, best)
     stop_time = time.time()
     delta = (stop_time - start_time) * 1000
 
-    return SolverOutput(func_values, beta, x0, delta)
+    # return SolverOutput(func_values, beta, x0, delta)

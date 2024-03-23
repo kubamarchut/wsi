@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 
 def random_vector(min_x, max_x, n):
@@ -10,8 +11,21 @@ class Individual:
         self.x = x
         self.fitness_score = 0
 
+    def mutate(self, sigma):
+        self.x = self.x + np.random.normal(0, sigma**2, len(self.x))
+
+    def one_point_crossover(self, partner, p):
+        if np.random.rand() < p:
+            point = np.random.randint(1, len(self.x))
+
+            new_x1 = np.concatenate((self.x[:point], partner.x[point:]))
+            new_x2 = np.concatenate((partner.x[:point], self.x[point:]))
+
+            self.x = new_x1
+            partner.x = new_x2
+
     def __str__(self) -> str:
-        return f"{self.x} -> {self.fitness_score}"
+        return f"{self.x} -> {self.fitness_score:.3f}"
 
 
 class Population:
@@ -31,6 +45,28 @@ class Population:
     def fitness(self, objective):
         for individual in self.individuals:
             individual.fitness_score = objective(individual.x)
+
+    def mutate(self, sigma):
+        for individual in self.individuals:
+            individual.mutate(sigma)
+
+    def tournament(self, pool, tournament_size):
+        specimens = np.random.choice(pool, tournament_size)
+        specimens = sorted(specimens, key=lambda x: x.fitness_score)
+        return specimens[0]
+
+    def selection(self, k=2):
+        new_pop = [
+            deepcopy(self.tournament(self.individuals, k))
+            for i in range(len(self.individuals))
+        ]
+        self.population = new_pop
+
+    def perform_crossover(self, p):
+        for individual in self.individuals:
+            partner = np.random.choice(self.individuals)
+
+            individual.one_point_crossover(partner, p)
 
     def __str__(self) -> str:
         output = ""
