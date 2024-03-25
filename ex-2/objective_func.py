@@ -1,10 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-
-def generate_input(minX, maxX, d):
-    return np.random.uniform(minX, maxX, d)
+from typing import Tuple
+from utils import generate_input
 
 
 class QFunc:
@@ -154,7 +152,6 @@ class DropWave(QFunc):
         Returns:
             float: The value of q(x).
         """
-        indices = np.arange(1, self.d + 1)
         numerator = 1 + np.cos(12 * np.sqrt(np.power(x[0], 2) + np.power(x[1], 2)))
         denumerator = 0.5 * (np.power(x[0], 2) + np.power(x[1], 2)) + 2
 
