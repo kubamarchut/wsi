@@ -32,6 +32,8 @@ class TicTacToeController:
         winner = self.model.check_for_winner()
         if winner != False:
             print(f"Player {winner} won!")
+        else:
+            print("It is a tie!")
 
 
 if __name__ == "__main__":
