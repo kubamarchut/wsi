@@ -48,9 +48,13 @@ class Population:
         self.chrom_cnt = chrom_cnt
         self.individuals = []
 
-    def initialize(self):
+    def initialize(self, random=True):
         for _ in range(self.size):
-            new_chrom = random_vector(self.min_x, self.max_x, self.chrom_cnt)
+            if random:
+                new_chrom = random_vector(self.min_x, self.max_x, self.chrom_cnt)
+            else:
+                new_chrom = np.ones(self.chrom_cnt) * self.min_x
+
             new_individual = Individual(new_chrom)
             self.individuals.append(new_individual)
 

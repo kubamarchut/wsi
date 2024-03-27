@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 
 from typing import Tuple
@@ -77,7 +78,7 @@ class QFunc:
             ax.set_ylabel("y")
             ax.set_zlabel("q(x)")
             if self.name != "":
-                plt.title(f"Visualization of {self.name}")
+                plt.title(f"Wizualizacja funkcji {self.name}")
             else:
                 plt.title(f"Visualization of q(X)")
             plt.show()
@@ -118,7 +119,7 @@ class Rastrigin(QFunc):
 
 class Gierwank(QFunc):
     def __init__(self, min_x=-50, max_x=50, d=10):
-        super().__init__(min_x, max_x, d, "Gierwank")
+        super().__init__(min_x, max_x, d, "Griewank")
 
     def get_func(self, x):
         """
@@ -161,9 +162,12 @@ class DropWave(QFunc):
 
 
 if __name__ == "__main__":
+    font = {"family": "normal", "weight": "bold", "size": 12}
+    matplotlib.rc("font", **font)
+
     # Testing Rastrigin function implementation
     new_2d_rastrigin = Rastrigin(d=2)
-    new_2d_rastrigin.draw(points=1000)
+    new_2d_rastrigin.draw(points=100)
 
     # Testing Gierwank function implementation
     new_2d_gierwank = Gierwank(d=2)

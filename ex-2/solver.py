@@ -14,13 +14,11 @@ class SolverOutput:
         self,
         best_in_each_generation: List[Individual],
         avg_fitness_per_pop: List[float],
-        initial_population: Population,
         optimized_function: QFunc,
         time_delta: float,
     ) -> None:
         self.best_in_each_generation = best_in_each_generation
         self.avg_fitness_per_pop = avg_fitness_per_pop
-        self.initial_population = initial_population
         self.optimized_function = optimized_function
         self.time_delta = time_delta
 
@@ -31,10 +29,11 @@ class OptimizationParameters:
         objective_func: QFunc,
         population_size: int = 100,
         max_steps: int = 100,
-        sigma: float = 0.05,
-        mut_prob: float = 0.8,
-        cross_prob: float = 0.5,
+        sigma: float = 0.2,
+        mut_prob: float = 0.6,
+        cross_prob: float = 0.6,
         verbose_graphs: bool = False,
+        random_start=True,
     ) -> None:
         self.objective_func = objective_func
         self.population_size = population_size
@@ -43,6 +42,7 @@ class OptimizationParameters:
         self.mut_prob = mut_prob
         self.cross_prob = cross_prob
         self.verbose_graphs = verbose_graphs
+        self.random_start = random_start
 
 
 def print_steps(solver_output: SolverOutput) -> None:
@@ -78,7 +78,7 @@ def solver(params: OptimizationParameters) -> SolverOutput:
         max_x=objective_func.max_x,
     )
     # generate new individuals with random chromosomes
-    population.initialize()
+    population.initialize(params.random_start)
 
     # evaluating individuals based on fitness function
     population.fitness(objective_func.get_func)
@@ -115,7 +115,7 @@ def solver(params: OptimizationParameters) -> SolverOutput:
         )
         avgs_per_pop.append(current_avg)
 
-        if params.verbose_graphs and (steps_counter + 1) % 5 == 0:
+        if params.verbose_graphs and steps_counter == params.max_steps - 1:
             draw_each_population(
                 population, objective_func, steps_counter, params.max_steps
             )
@@ -132,7 +132,6 @@ def solver(params: OptimizationParameters) -> SolverOutput:
     return SolverOutput(
         best_in_each_generation,
         avgs_per_pop,
-        initial_population,
         objective_func,
         time_delta,
     )
