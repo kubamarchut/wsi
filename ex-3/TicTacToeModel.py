@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Tuple
 
 
 class GameParams:
@@ -22,6 +23,12 @@ class TicTacToeModel:
         self.board = np.full(
             (self.game_params.size, self.game_params.size), self.game_params.empty
         )
+
+    def set_game_players(self, player_types: Tuple[str, str]) -> None:
+        self.player_types = player_types
+
+    def get_current_player_type(self) -> str:
+        return self.player_types[self.move_counter % 2]
 
     def make_move(self, row: int, column: int) -> bool:
         if self.board[row][column] == self.game_params.empty:

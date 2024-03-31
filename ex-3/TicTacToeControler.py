@@ -7,22 +7,34 @@ class TicTacToeController:
         self.model = model
         self.view = view
 
+    def get_competitors(self) -> None:
+        self.model.set_game_players(self.view.get_player_types())
+
     def conduct_game(self):
+        self.get_competitors()
+
         while self.model.continue_game():
             self.view.present_board(self.model.board)
-            row = int(
-                input(f"Enter row number from 1 to {self.model.game_params.size}: ")
-            )
-            column = int(
-                input(f"Enter column number from 1 to {self.model.game_params.size}: ")
-            )
-            row -= 1
-            column -= 1
-            if (row >= 0 and row < self.model.game_params.size) and (
-                column >= 0 and column < self.model.game_params.size
-            ):
-                if self.model.make_move(row, column):
-                    continue
+
+            if self.model.get_current_player_type() != "h":
+                print("Here is a place for AI move")
+                continue
+            else:
+                row = int(
+                    input(f"Enter row number from 1 to {self.model.game_params.size}: ")
+                )
+                column = int(
+                    input(
+                        f"Enter column number from 1 to {self.model.game_params.size}: "
+                    )
+                )
+                row -= 1
+                column -= 1
+                if (row >= 0 and row < self.model.game_params.size) and (
+                    column >= 0 and column < self.model.game_params.size
+                ):
+                    if self.model.make_move(row, column):
+                        continue
 
             print("Invalid move! Try again")
 

@@ -1,6 +1,21 @@
+from typing import Tuple
+
+
 class TicTacToeView:
     def __init__(self) -> None:
         pass
+
+    def get_player_types(self) -> Tuple[str, str]:
+        print("Define player (human or computer h/c)")
+        player_1 = input("player 1: ").lower()
+        player_2 = input("player 2: ").lower()
+
+        while player_1 not in ["h", "c"] or player_2 not in ["h", "c"]:
+            print("invalid input try again")
+            player_1 = input("player 1: ").lower()
+            player_2 = input("player 2: ").lower()
+
+        return player_1, player_2
 
     def present_board(self, board) -> None:
         for row_number, row in enumerate(board):
