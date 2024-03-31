@@ -17,7 +17,7 @@ class TicTacToeController:
             self.view.present_board(self.model.board)
 
             if self.model.get_current_player_type() != "h":
-                print("Here is a place for AI move")
+                self.model.ai_player_move()
                 continue
             else:
                 row = int(

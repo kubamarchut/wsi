@@ -1,5 +1,8 @@
 import numpy as np
 from typing import Tuple
+from math import inf
+
+from MiniMax import minmax, possible_moves
 
 
 class GameParams:
@@ -61,3 +64,25 @@ class TicTacToeModel:
                 return player
 
         return False
+
+    def convert_board(self):
+        ai_board = np.copy(self.board)
+        ai_board[ai_board == self.game_params.empty] = 0
+        ai_board[ai_board == self.game_params.first_player] = 1
+        ai_board[ai_board == self.game_params.second_player] = 2
+        ai_board = ai_board.astype(np.float64)
+        ai_board[ai_board == 2] = -1
+        return ai_board.astype(np.float64)
+
+    def ai_player_move(self):
+        chosen = np.zeros(shape=(3, 3))
+        best = inf
+        for move in possible_moves(self.convert_board(), False):
+            current_score = minmax(self.convert_board(), (0, 0), True, 9)
+            print(move, current_score)
+            if best > current_score:
+                best = max(best, current_score)
+                chosen = move
+
+        indices = np.nonzero(chosen - self.convert_board().astype(np.float64))
+        self.make_move(indices[0][0], indices[1][0])

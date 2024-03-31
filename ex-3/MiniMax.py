@@ -22,7 +22,7 @@ def apply_move(
 def minmax(
     state: np.ndarray, action: Tuple[int, int], maximizing: bool, depth: int
 ) -> int:
-    if is_terminal(state) != None:
+    if depth == 0 or is_terminal(state) != None:
         return evaluate_game(state)
 
     if maximizing:
@@ -64,14 +64,14 @@ if __name__ == "__main__":
         chosen = np.zeros(shape=(3, 3))
         for move in possible_moves(board, i % 2 == 0):
             if i % 2 == 0:
-                move_score = minmax(move, (1, 1), False, 10)
+                move_score = minmax(move, (1, 1), False, 9)
                 # print(move, move_score)
                 if best < move_score:
                     best = move_score
                     chosen = move
 
             else:
-                move_score = minmax(move, (1, 1), True, 10)
+                move_score = minmax(move, (1, 1), True, 9)
                 # print(move, move_score)
                 if best > move_score:
                     best = move_score
