@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Optional, Tuple
+from typing import Optional
 
 
 def heuristic_matrix(size: int = 3) -> np.ndarray:
@@ -14,12 +14,21 @@ def heuristic_matrix(size: int = 3) -> np.ndarray:
     return matrix
 
 
+cache = {}
+
+
 def is_terminal(state: np.ndarray) -> Optional[int]:
-    if check_for_winner(state) != None:
-        return check_for_winner(state)
+    if tuple(state.flatten()) in cache:
+        return cache[tuple(state.flatten())]
+    winner = check_for_winner(state)
+    if winner != None:
+        cache[tuple(state.flatten())] = winner
+        return winner
     elif np.count_nonzero(state) == state.size:
+        cache[tuple(state.flatten())] = 0
         return 0
     else:
+        cache[tuple(state.flatten())] = None
         return None
 
 
@@ -31,15 +40,14 @@ def evaluate_game(state: np.ndarray) -> int:
 
 
 def check_for_winner(state: np.ndarray) -> Optional[int]:
+    diag = np.diag(state)
+    flipped_diag = np.diag(np.fliplr(state))
+
     for player in [-1, 1]:
-        if np.any(np.all(state == player, axis=0)) or np.any(
-            np.all(state == player, axis=1)
-        ):
+        if np.any(np.all(state == player, axis=0) | np.all(state == player, axis=1)):
             return player
 
-        if np.all(np.diag(state) == player) or np.all(
-            np.diag(np.fliplr(state)) == player
-        ):
+        if np.all(diag == player) or np.all(flipped_diag == player):
             return player
 
     return None

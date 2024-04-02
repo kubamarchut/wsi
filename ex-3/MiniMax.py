@@ -5,35 +5,37 @@ from math import inf
 from TicTacToeHeuristic import evaluate_game, is_terminal
 
 
-def possible_moves(state: np.ndarray, player: bool) -> List[np.ndarray]:
-    player_marker = 1 if player else -1
+def possible_moves(state: np.ndarray) -> List[Tuple[int, int]]:
     empty_positions = list(zip(*np.where(state == 0)))
-    return [apply_move(state, pos, player_marker) for pos in empty_positions]
-
-
-def apply_move(
-    state: np.ndarray, position: Tuple[int, int], player_marker: int
-) -> np.ndarray:
-    next_state = state.copy()
-    next_state[position] = player_marker
-    return next_state
+    return empty_positions
 
 
 def minmax(
     state: np.ndarray, action: Tuple[int, int], maximizing: bool, depth: int
 ) -> int:
-    if depth == 0 or is_terminal(state) != None:
-        return evaluate_game(state)
-
+    player_marker = 1 if not maximizing else -1
+    state[action] = player_marker
+    terminal_flag = is_terminal(state)
+    if terminal_flag is not None:
+        state[action] = 0
+        return terminal_flag * 10
+    if depth == 0:
+        res = evaluate_game(state)
+        state[action] = 0
+        return res
     if maximizing:
         value = -inf
-        for child in possible_moves(np.copy(state), maximizing):
-            value = max(value, minmax(child, (0, 0), False, depth - 1))
+        for child in possible_moves(state):
+            value = max(value, minmax(state, child, False, depth - 1))
+
+        state[action] = 0
         return value
     else:
         value = inf
-        for child in possible_moves(np.copy(state), maximizing):
-            value = min(value, minmax(child, (0, 0), True, depth - 1))
+        for child in possible_moves(state):
+            value = min(value, minmax(state, child, True, depth - 1))
+
+        state[action] = 0
         return value
 
 
@@ -53,8 +55,11 @@ if __name__ == "__main__":
     starting_board = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
     # print(minmax(starting_board, (1, 1), False, 10))
-    # print(minmax(starting_board, (1, 1), True, 10))
-
+    """
+    for move in possible_moves(starting_board):
+        print(minmax(starting_board, move, False, 9))
+        break
+    """
     board = starting_board
     for i in range(9):
         if i % 2 == 0:
@@ -62,22 +67,24 @@ if __name__ == "__main__":
         else:
             best = inf
         chosen = np.zeros(shape=(3, 3))
-        for move in possible_moves(board, i % 2 == 0):
+        for move in possible_moves(board):
             if i % 2 == 0:
-                move_score = minmax(move, (1, 1), False, 9)
+                move_score = minmax(board, move, False, 9)
+                # print("move:", board, move_score)
                 # print(move, move_score)
                 if best < move_score:
                     best = move_score
                     chosen = move
 
             else:
-                move_score = minmax(move, (1, 1), True, 9)
+                move_score = minmax(board, move, True, 9)
+                # print("move:", board, move, move_score)
                 # print(move, move_score)
                 if best > move_score:
                     best = move_score
                     chosen = move
 
+        board[chosen] = 1 if i % 2 == 0 else -1
         print(10 * "-")
-        print(chosen, best)
+        print(board, best)
         print(10 * "-")
-        board = chosen
