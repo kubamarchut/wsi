@@ -18,11 +18,13 @@ class TicTacToeView:
         return player_1, player_2
 
     def present_board(self, board) -> None:
+        print()
         for row_number, row in enumerate(board):
             print(f" {" | ".join(row)} ")
             if row_number < len(board) - 1:
                 row_sep = "---+" * len(row)
                 print(row_sep[:-1])
+        print()
 
 
 if __name__ == "__main__":

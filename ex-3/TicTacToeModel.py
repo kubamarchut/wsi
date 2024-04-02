@@ -75,14 +75,23 @@ class TicTacToeModel:
         return ai_board.astype(np.float64)
 
     def ai_player_move(self):
-        chosen = np.zeros(shape=(3, 3))
-        best = inf
-        for move in possible_moves(self.convert_board(), False):
-            current_score = minmax(self.convert_board(), (0, 0), True, 9)
-            print(move, current_score)
-            if best > current_score:
-                best = max(best, current_score)
-                chosen = move
+        chosen = (0, 0)
+        if self.move_counter % 2 == 0:
+            best = -inf
+        else:
+            best = inf
 
-        indices = np.nonzero(chosen - self.convert_board().astype(np.float64))
-        self.make_move(indices[0][0], indices[1][0])
+        for move in possible_moves(self.convert_board()):
+            current_score = minmax(
+                self.convert_board(), move, self.move_counter % 2 != 0, 9
+            )
+            if self.move_counter % 2 == 0:
+                if best < current_score:
+                    best = current_score
+                    chosen = move
+            else:
+                if best > current_score:
+                    best = current_score
+                    chosen = move
+
+        self.make_move(*chosen)
