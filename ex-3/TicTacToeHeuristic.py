@@ -1,6 +1,8 @@
 import numpy as np
 from typing import Optional
 
+cache = {}
+
 
 def heuristic_matrix(size: int = 3) -> np.ndarray:
     matrix = np.full((size, size), size)
@@ -14,21 +16,23 @@ def heuristic_matrix(size: int = 3) -> np.ndarray:
     return matrix
 
 
-cache = {}
-
-
-def is_terminal(state: np.ndarray) -> Optional[int]:
-    if tuple(state.flatten()) in cache:
+def is_terminal(state: np.ndarray, use_cache: bool = False) -> Optional[int]:
+    if use_cache and tuple(state.flatten()) in cache:
         return cache[tuple(state.flatten())]
+
     winner = check_for_winner(state)
-    if winner != None:
-        cache[tuple(state.flatten())] = winner
+
+    if winner is not None:
+        if use_cache:
+            cache[tuple(state.flatten())] = winner
         return winner
     elif np.count_nonzero(state) == state.size:
-        cache[tuple(state.flatten())] = 0
+        if use_cache:
+            cache[tuple(state.flatten())] = 0
         return 0
     else:
-        cache[tuple(state.flatten())] = None
+        if use_cache:
+            cache[tuple(state.flatten())] = None
         return None
 
 
