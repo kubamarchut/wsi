@@ -1,6 +1,6 @@
 import numpy as np
-from typing import Tuple, List
 from math import inf
+from typing import Tuple, List
 
 from TicTacToeHeuristic import evaluate_game, is_terminal
 
@@ -43,48 +43,37 @@ def alpha_pruning(
     state: np.ndarray,
     action: Tuple[int, int],
     maximizing: bool,
-    alpha: int,
-    beta: int,
+    depth: int,
+    alpha: int = -inf,
+    beta: int = inf,
 ) -> int:
-    raise NotImplementedError
+    player_marker = 1 if not maximizing else -1
+    state[action] = player_marker
+    terminal_flag = is_terminal(state)
+    if terminal_flag is not None:
+        state[action] = 0
+        return terminal_flag * 10
+    if depth == 0:
+        res = evaluate_game(state)
+        state[action] = 0
+        return res
+    if maximizing:
+        for child in possible_moves(state):
+            alpha = max(
+                alpha, alpha_pruning(state, child, False, depth - 1, alpha, beta)
+            )
+            if alpha >= beta:
+                state[action] = 0
+                return alpha
 
+        state[action] = 0
+        return alpha
+    else:
+        for child in possible_moves(state):
+            beta = min(beta, alpha_pruning(state, child, True, depth - 1, alpha, beta))
+            if alpha >= beta:
+                state[action] = 0
+                return beta
 
-if __name__ == "__main__":
-    starting_board = np.zeros(shape=(3, 3))
-
-    starting_board = np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
-
-    # print(minmax(starting_board, (1, 1), False, 10))
-    """
-    for move in possible_moves(starting_board):
-        print(minmax(starting_board, move, False, 9))
-        break
-    """
-    board = starting_board
-    for i in range(9):
-        if i % 2 == 0:
-            best = -inf
-        else:
-            best = inf
-        chosen = np.zeros(shape=(3, 3))
-        for move in possible_moves(board):
-            if i % 2 == 0:
-                move_score = minmax(board, move, False, 9)
-                # print("move:", board, move_score)
-                # print(move, move_score)
-                if best < move_score:
-                    best = move_score
-                    chosen = move
-
-            else:
-                move_score = minmax(board, move, True, 9)
-                # print("move:", board, move, move_score)
-                # print(move, move_score)
-                if best > move_score:
-                    best = move_score
-                    chosen = move
-
-        board[chosen] = 1 if i % 2 == 0 else -1
-        print(10 * "-")
-        print(board, best)
-        print(10 * "-")
+        state[action] = 0
+        return beta
