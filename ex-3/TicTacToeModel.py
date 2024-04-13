@@ -2,7 +2,7 @@ import numpy as np
 from typing import Tuple
 from math import inf
 
-from MiniMax import minmax, possible_moves
+from MiniMax import minmax, alpha_pruning, possible_moves
 
 
 class GameParams:
@@ -82,7 +82,7 @@ class TicTacToeModel:
             best = inf
 
         for move in possible_moves(self.convert_board()):
-            current_score = minmax(
+            current_score = alpha_pruning(
                 self.convert_board(), move, self.move_counter % 2 != 0, 9
             )
             if self.move_counter % 2 == 0:
