@@ -16,7 +16,7 @@ def heuristic_matrix(size: int = 3) -> np.ndarray:
     return matrix
 
 
-def is_terminal(state: np.ndarray, use_cache: bool = True) -> Optional[int]:
+def is_terminal(state: np.ndarray, use_cache: bool = False) -> Optional[int]:
     if use_cache and tuple(state.flatten()) in cache:
         return cache[tuple(state.flatten())]
 

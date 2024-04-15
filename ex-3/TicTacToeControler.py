@@ -1,6 +1,8 @@
 from TicTacToeModel import TicTacToeModel, GameParams
 from TicTacToeView import TicTacToeView
 
+from typing import Tuple
+
 
 class TicTacToeController:
     def __init__(self, model: TicTacToeModel, view: TicTacToeView) -> None:
@@ -10,7 +12,37 @@ class TicTacToeController:
     def get_competitors(self) -> None:
         self.model.set_game_players(self.view.get_player_types())
 
-    def conduct_game(self):
+    def get_human_player_move(self) -> Tuple[int, int]:
+        while True:
+            try:
+                row = (
+                    int(
+                        input(
+                            f"Enter row number from 1 to {self.model.game_params.size}: "
+                        )
+                    )
+                    - 1
+                )
+                column = (
+                    int(
+                        input(
+                            f"Enter column number from 1 to {self.model.game_params.size}: "
+                        )
+                    )
+                    - 1
+                )
+
+                if (
+                    0 <= row < self.model.game_params.size
+                    and 0 <= column < self.model.game_params.size
+                ):
+                    return row, column
+                else:
+                    print("Invalid input! Please enter values within the board range.")
+            except ValueError:
+                print("Invalid input! Please enter integer values.")
+
+    def conduct_game(self) -> None:
         self.get_competitors()
 
         while self.model.continue_game():
@@ -20,21 +52,9 @@ class TicTacToeController:
                 self.model.ai_player_move()
                 continue
             else:
-                row = int(
-                    input(f"Enter row number from 1 to {self.model.game_params.size}: ")
-                )
-                column = int(
-                    input(
-                        f"Enter column number from 1 to {self.model.game_params.size}: "
-                    )
-                )
-                row -= 1
-                column -= 1
-                if (row >= 0 and row < self.model.game_params.size) and (
-                    column >= 0 and column < self.model.game_params.size
-                ):
-                    if self.model.make_move(row, column):
-                        continue
+                move = self.get_human_player_move()
+                if self.model.make_move(*move):
+                    continue
 
             print("Invalid move! Try again")
 

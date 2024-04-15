@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Callable
 from math import inf
 
 from MiniMax import minmax, alpha_pruning, possible_moves
@@ -65,16 +65,18 @@ class TicTacToeModel:
 
         return False
 
-    def convert_board(self):
+    def convert_board(self) -> np.ndarray:
         ai_board = np.copy(self.board)
-        ai_board[ai_board == self.game_params.empty] = 0
-        ai_board[ai_board == self.game_params.first_player] = 1
-        ai_board[ai_board == self.game_params.second_player] = 2
-        ai_board = ai_board.astype(np.float64)
+        player_mapping = {
+            self.game_params.empty: 0,
+            self.game_params.first_player: 1,
+            self.game_params.second_player: 2,
+        }
+        ai_board = np.vectorize(player_mapping.get)(ai_board)
         ai_board[ai_board == 2] = -1
         return ai_board.astype(np.float64)
 
-    def ai_player_move(self):
+    def ai_player_move(self, opt_func: Callable = alpha_pruning) -> None:
         chosen = (0, 0)
         if self.move_counter % 2 == 0:
             best = -inf
@@ -82,7 +84,7 @@ class TicTacToeModel:
             best = inf
 
         for move in possible_moves(self.convert_board()):
-            current_score = alpha_pruning(
+            current_score = opt_func(
                 self.convert_board(), move, self.move_counter % 2 != 0, 9
             )
             if self.move_counter % 2 == 0:
