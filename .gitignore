@@ -4,6 +4,8 @@
 .vscode/
 common/.md
 ex-*/doc
+ex-*/**/*.csv
+ex-*/**/*.png
 kod/
 experiments/threads/*
 
