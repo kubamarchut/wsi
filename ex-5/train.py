@@ -114,5 +114,5 @@ def evaluate_model(input_test, result_test, network):
     accuracy = accuracy_score(result_true, result_pred)
     f1 = f1_score(result_true, result_pred, average="micro")
 
-    print(f"Accuracy: {accuracy}")
+    # print(f"Accuracy: {accuracy}")
     print(f"F1 Score: {f1}")
