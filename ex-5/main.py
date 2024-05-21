@@ -6,38 +6,69 @@ import matplotlib.pyplot as plt
 import multiprocessing
 
 
-def brain_process(input, layers, input_train, output_train, input_test, output_test, proc, epochs, batch, return_dict, freq,
-                  print_plots=True):
-    layers_bis = [input.shape[1], layers, 10]  # 10 for num_class
+def brain_process(
+    input,
+    layers,
+    input_train,
+    output_train,
+    input_test,
+    output_test,
+    proc,
+    epochs,
+    batch,
+    return_dict,
+    freq,
+    print_plots=True,
+):
+    layers_bis = [input.shape[1], *layers, 10]  # 10 for num_class
     brain = Brain_network(input_train, output_train, layers_bis)
-    model = Brain_network.train_model(brain, input_train, output_train, layers_bis, epochs=epochs, batch_size=batch,
-                                      freq=freq)
+    model = Brain_network.train_model(
+        brain,
+        input_train,
+        output_train,
+        layers_bis,
+        epochs=epochs,
+        batch_size=batch,
+        freq=freq,
+    )
     eval = Brain_network.evaluate_model(brain, input_test, output_test, model)
     if print_plots:
         plt.plot(brain.probed_epoch, brain.losses)
-        plt.title(f"Training Loss, epochs: {epochs}, batch size:{batch}, layers:{layers}")
+        plt.title(
+            f"Training Loss, epochs: {epochs}, batch size:{batch}, layers:{layers}"
+        )
         plt.xlabel("epochs")
         plt.ylabel("loss")
         plt.grid()
-        plt.show()
+        # plt.show()
     key_full = f"E:{epochs}, B:{batch}, L:{layers}"
-    return_dict[proc] = [key_full, eval, max(brain.losses), min(brain.losses), epochs, batch, np.std(brain.losses), layers]
+    return_dict[proc] = [
+        key_full,
+        eval,
+        max(brain.losses),
+        min(brain.losses),
+        epochs,
+        batch,
+        np.std(brain.losses),
+        layers,
+    ]
     # print(key_full, "-", eval)
 
 
 def quick_mean(list):
-    calc_ls=[]
+    calc_ls = []
     for l in list:
         calc_ls.append(l[1])
     sum_ = 0
     for i in calc_ls:
         sum_ += i
-    return sum_/len(calc_ls)
+    return sum_ / len(calc_ls)
+
 
 def main():
 
-    print_plots = True
-    layers = 15
+    print_plots = False
+    layers = [32]
 
     digits = load_digits()
     input, output = digits.data, digits.target
@@ -63,9 +94,23 @@ def main():
         for batch in [32, 64, 96, 128]:
 
             proc += 1
-            p = multiprocessing.Process(target=brain_process,
-                                            args=(input, layers, input_train, output_train, input_test, output_test, proc, epochs,
-                                                  batch, return_dict, freq, print_plots))
+            p = multiprocessing.Process(
+                target=brain_process,
+                args=(
+                    input,
+                    layers,
+                    input_train,
+                    output_train,
+                    input_test,
+                    output_test,
+                    proc,
+                    epochs,
+                    batch,
+                    return_dict,
+                    freq,
+                    print_plots,
+                ),
+            )
             jobs.append(p)
             p.start()
     for p in jobs:
@@ -163,12 +208,10 @@ def main():
     print("Mean epoch 2000:", quick_mean(eval_e2000_s))
     print("Mean epoch 2500:", quick_mean(eval_e2500_s))
 
-
-
     results_sorted = sorted(results, key=lambda x: (x[4], x[5], x[7]))
     plt.figure(figsize=(16, 9))
     for r in results_sorted:
-        plt.errorbar(r[0], r[1], fmt='o', capthick=2, capsize=5)
+        plt.errorbar(r[0], r[1], fmt="o", capthick=2, capsize=5)
     plt.title(f"Training Evaluations with F1 scores")
     plt.xlabel("Epochs,Batch size")
     plt.ylabel("Final evaluation")
@@ -178,7 +221,7 @@ def main():
 
     plt.figure(figsize=(16, 9))
     for r in results_sorted:
-        plt.errorbar(r[0], r[2], r[6], fmt='o', capthick=2, capsize=5)
+        plt.errorbar(r[0], r[2], r[6], fmt="o", capthick=2, capsize=5)
     plt.title(f"Training Max Loss")
     plt.xlabel("Epochs,Batch size")
     plt.ylabel("Loss")
@@ -188,12 +231,31 @@ def main():
 
     plt.figure(figsize=(16, 9))
     for r in results_sorted:
-        plt.errorbar(r[0], r[3], r[6], fmt='o', capthick=2, capsize=5)
+        plt.errorbar(r[0], r[3], r[6], fmt="o", capthick=2, capsize=5)
     plt.title(f"Training Min Loss")
     plt.xlabel("Epochs,Batch size")
     plt.ylabel("Loss")
     plt.xticks(rotation=-60)
     plt.grid()
+    plt.show()
+
+    eval_by_batch = {32: [], 64: [], 96: [], 128: []}
+    for t in results:
+        batch_size = int(t[0].split(",")[1].split(":")[1])  # Extract batch size
+        eval_by_batch[batch_size].append(t)
+
+    for batch_size, evals in eval_by_batch.items():
+        evals_sorted = sorted(evals, key=lambda x: x[4])
+        epochs_batch = [t[4] for t in evals_sorted]
+        final_eval = [t[1] for t in evals_sorted]
+        plt.plot(epochs_batch, final_eval, label=f"Batch size: {batch_size}")
+
+    plt.title("Final Evaluation for Different Batch Sizes")
+    plt.xlabel("Epochs")
+    plt.ylabel("Final Evaluation")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
 
